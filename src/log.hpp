@@ -13,6 +13,6 @@ class log {
   std::string mPrefix;
 
   public:
-  log(const std::string prefix, const std::string fpath = "");
-  void operator<< (const std::string str) const;
+    log(const std::string prefix, const std::string fpath = "");
+    void operator<< (const std::string str) const;
 };
