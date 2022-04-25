@@ -1,0 +1,2 @@
+#define kaon_VERSION_MAJOR @kaon_VERSION_MAJOR@
+#define kaon_VERSION_MINOR @kaon_VERSION_MINOR@
