@@ -6,11 +6,8 @@
  */
 
 #include "log.hpp"
-#include <iostream>
-#include <fstream>
-#include <ctime>
 
-log::log(const std::string prefix, const std::string fpath)
+logBase::logBase(const std::string &prefix, const std::string &fpath)
 : mPrefix(prefix) {
 
   if (!fpath.empty()) {
@@ -23,9 +20,5 @@ log::log(const std::string prefix, const std::string fpath)
   mLogFile.reset(&std::cout, [](...){});
 }
 
-void log::operator<< (const std::string str) const {
-  std::time_t time = std::time(nullptr);
-  std::string localtime = std::asctime(std::localtime(&time));
-  localtime.erase(--localtime.end(), localtime.end());
-  *mLogFile << "[" << localtime << "] " << mPrefix << ": " << str << std::endl;
-}
+log::log(const std::string &prefix, const std::string &fpath)
+: logBase(prefix, fpath) { }

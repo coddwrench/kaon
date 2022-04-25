@@ -5,10 +5,11 @@
  * SPDX-License-Identifier: MIT
  */
 
+#include "kaonConfig.h"
 #include "log.hpp"
 
 int main() {
   log logger("main");
-  logger << "hello";
+  LOG(logger, "Starting kaon v" << kaon_VERSION_MAJOR << "." << kaon_VERSION_MINOR);
   return 0;
 }
