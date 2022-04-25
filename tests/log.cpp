@@ -20,7 +20,7 @@ class logTest : public ::testing::Test {
       mLoggerPtr.reset(new log("logTest", mLogFile));
     }
     ~logTest() override {
-//      std::remove(mLogFile);
+      std::remove(mLogFile);
     }
 };
 
