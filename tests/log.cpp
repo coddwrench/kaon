@@ -11,27 +11,27 @@
 #include <log.hpp>
 #include <gtest/gtest.h>
 
-class logTest : public ::testing::Test {
+class LogTest : public ::testing::Test {
   protected:
-    static constexpr const char *mLogFile = "logTest.log";
-    std::shared_ptr<log> mLoggerPtr;
+    static constexpr const char *mLogFile = "LogTest.log";
+    std::shared_ptr<Log> mLoggerPtr;
 
-    logTest() {
-      mLoggerPtr.reset(new log("logTest", mLogFile));
+    LogTest() {
+      mLoggerPtr.reset(new Log("LogTest", mLogFile));
     }
-    ~logTest() override {
+    ~LogTest() override {
       std::remove(mLogFile);
     }
 };
 
-TEST_F(logTest, stdoutTest) {
+TEST_F(LogTest, stdoutTest) {
   std::time_t time = std::time(nullptr);
   std::string localtime = std::asctime(std::localtime(&time));
   localtime.erase(--localtime.end(), localtime.end());
   LOG(*mLoggerPtr, "leel");
 
   std::ifstream logFile(mLogFile);
-  std::string str = "[" + localtime + "] logTest: leel";
+  std::string str = "[" + localtime + "] LogTest: leel";
   std::string logStr;
   std::getline(logFile, logStr);
   ASSERT_EQ(logStr, str);

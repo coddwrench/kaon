@@ -13,33 +13,33 @@
 
 #define LOG(log, str) log << str << std::endl
 
-class logBase {
+class LogBase {
   protected:
     std::shared_ptr<std::ostream> mLogFile;
     std::string mPrefix;
 
-    logBase(const std::string &prefix, const std::string &fpath);
-    logBase(const logBase &) = delete;
-    ~logBase() = default;
+    LogBase(const std::string &prefix, const std::string &fpath);
+    LogBase(const LogBase &) = delete;
+    ~LogBase() = default;
   public:
     template<typename T>
-    const logBase &operator<< (const T &rhs) const {
+    const LogBase &operator<< (const T &rhs) const {
       *mLogFile << rhs;
       return *this;
     }
 
-    const logBase &operator<< (std::ostream&(*func)(std::ostream&)) const {
+    const LogBase &operator<< (std::ostream&(*func)(std::ostream&)) const {
       (*func)(*mLogFile);
       return *this;
     }
 };
 
-class log : public logBase {
+class Log : public LogBase {
   public:
-    log(const std::string &prefix, const std::string &fpath = "");
+    Log(const std::string &prefix, const std::string &fpath = "");
 
     template<typename T>
-    const logBase &operator<< (const T &rhs) const {
+    const LogBase &operator<< (const T &rhs) const {
       std::time_t time = std::time(nullptr);
       std::string localtime = std::asctime(std::localtime(&time));
       localtime.erase(--localtime.end(), localtime.end());

@@ -7,7 +7,7 @@
 
 #include "log.hpp"
 
-logBase::logBase(const std::string &prefix, const std::string &fpath)
+LogBase::LogBase(const std::string &prefix, const std::string &fpath)
 : mPrefix(prefix) {
 
   if (!fpath.empty()) {
@@ -20,5 +20,5 @@ logBase::logBase(const std::string &prefix, const std::string &fpath)
   mLogFile.reset(&std::cout, [](...){});
 }
 
-log::log(const std::string &prefix, const std::string &fpath)
-: logBase(prefix, fpath) { }
+Log::Log(const std::string &prefix, const std::string &fpath)
+: LogBase(prefix, fpath) { }

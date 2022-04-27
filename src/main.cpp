@@ -9,7 +9,7 @@
 #include "log.hpp"
 
 int main() {
-  log logger("main");
+  Log logger("main");
   LOG(logger, "Starting kaon v" << kaon_VERSION_MAJOR << "." << kaon_VERSION_MINOR);
   return 0;
 }
