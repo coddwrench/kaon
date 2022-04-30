@@ -5,6 +5,9 @@
  * SPDX-License-Identifier: MIT
  */
 
+#ifndef KAON_LOG_HPP_
+#define KAON_LOG_HPP_
+
 #include <memory>
 #include <string>
 #include <iostream>
@@ -47,3 +50,5 @@ class Log : public LogBase {
       return *this;
     }
 };
+
+#endif // #define KAON_LOG_HPP_
