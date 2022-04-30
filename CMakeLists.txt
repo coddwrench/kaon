@@ -5,12 +5,15 @@ include(CTest)
 configure_file(src/kaonConfig.h.in kaonConfig.h)
 set(KAON_SRC
     src/main.cpp
-    src/log.cpp)
+    src/log.cpp
+    src/window/xlib_window.cpp)
 add_executable(kaon ${KAON_SRC})
 add_executable(test_log tests/log.cpp src/log.cpp)
 
 target_include_directories(kaon
-                           PUBLIC ${CMAKE_BINARY_DIR}/)
+                           PUBLIC ${CMAKE_BINARY_DIR}/
+                           src/)
+                       target_link_libraries(kaon X11 GL GLU)
 target_include_directories(test_log
                            PUBLIC src/)
 target_link_libraries(test_log gtest)

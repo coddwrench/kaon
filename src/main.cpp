@@ -7,9 +7,23 @@
 
 #include "kaonConfig.h"
 #include "log.hpp"
+#include "window/xlib_window.hpp"
 
 int main() {
   Log logger("main");
   LOG(logger, "Starting kaon v" << kaon_VERSION_MAJOR << "." << kaon_VERSION_MINOR);
+  KWindow wnd;
+  bool run = true;
+  wnd.createWindow();
+
+  auto keyPress = [&run, &logger](WindowEvent event, void *) {
+    run = false;
+  };
+  wnd.addEventCB(WindowEvent::keyPress, keyPress);
+
+  while (run) {
+    wnd.draw();
+  }
+
   return 0;
 }
