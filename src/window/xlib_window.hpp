@@ -4,7 +4,7 @@
  * Copyright (c) 2022 Nikita (sh1r4s3) Ermakov <sh1r4s3@mail.si-head.nl>
  * SPDX-License-Identifier: MIT
  */
-#define KAON_XLIB_WINDOW_HPP_
+#ifndef KAON_XLIB_WINDOW_HPP_
 #define KAON_XLIB_WINDOW_HPP_
 
 #include "window/abstract_window.hpp"
