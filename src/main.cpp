@@ -7,22 +7,23 @@
 
 #include "kaonConfig.h"
 #include "log.hpp"
-#include "window/xlib_window.hpp"
+#include "window/abstract_window.hpp"
 
 int main() {
   Log logger("main");
   LOG(logger, "Starting kaon v" << kaon_VERSION_MAJOR << "." << kaon_VERSION_MINOR);
-  KWindow wnd;
+
+  std::shared_ptr<AbstractWindow> wnd = std::move(AbstractWindow::factory());
   bool run = true;
-  wnd.createWindow();
+  wnd->createWindow();
 
   auto keyPress = [&run, &logger](WindowEvent event, void *) {
     run = false;
   };
-  wnd.addEventCB(WindowEvent::keyPress, keyPress);
+  wnd->addEventCB(WindowEvent::keyPress, keyPress);
 
   while (run) {
-    wnd.draw();
+    wnd->draw();
   }
 
   return 0;

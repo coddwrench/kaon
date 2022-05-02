@@ -12,6 +12,7 @@
 #include <unordered_map>
 #include <vector>
 #include <functional>
+#include <memory>
 
 enum class WindowEvent {
   keyPress,
@@ -20,9 +21,18 @@ enum class WindowEvent {
 using WindowEventCB = std::function<void(WindowEvent, void *)>;
 using WindowEventId = int;
 
-template<typename SystemEvent>
 class AbstractWindow {
   public:
+    virtual ~AbstractWindow() = default;
+    virtual bool createWindow(int width = 640, int height = 480, const std::string &name = "K engine") {
+      mWidth = width;
+      mHeight = height;
+      mName = name;
+      return true;
+    }
+    virtual bool destroyWindow() = 0;
+    virtual void draw() = 0;
+
     WindowEventId addEventCB(WindowEvent event, WindowEventCB func) {
       auto itEvent = mEvents.find(event);
       if (itEvent != mEvents.end()) {
@@ -41,20 +51,12 @@ class AbstractWindow {
       itEvent->second.erase(itCB);
     }
 
+    static std::shared_ptr<AbstractWindow> factory(); // Every derived class should define this function
+
   protected:
     int mWidth, mHeight;
     std::string mName;
     std::unordered_map<WindowEvent, std::vector<WindowEventCB>> mEvents;
-
-    virtual bool createWindow(int width, int height, const std::string &name) {
-      mWidth = width;
-      mHeight = height;
-      mName = name;
-      return true;
-    }
-    virtual bool destroyWindow() = 0;
-    virtual void draw() = 0;
-    virtual WindowEvent convertEvent(SystemEvent) = 0;
 };
 
 #endif // #define KAON_ABSTRACT_WINDOW_HPP_

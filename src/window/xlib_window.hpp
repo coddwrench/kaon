@@ -12,12 +12,12 @@
 #include <X11/Xlib.h>
 #include <GL/glx.h>
 
-class KWindow : public AbstractWindow<const XEvent &> {
+class KWindow : public AbstractWindow {
   public:
-    bool createWindow(int width = 640, int height = 480, const std::string &name = "K engine") override;
+    ~KWindow() override;
+    bool createWindow(int width, int height, const std::string &name) override;
     bool destroyWindow() override;
     void draw() override;
-    WindowEvent convertEvent(const XEvent &event) override;
 
   private:
     Display *mDisplay {nullptr};
@@ -29,6 +29,8 @@ class KWindow : public AbstractWindow<const XEvent &> {
     GLXContext mGlc;
     XWindowAttributes mGwa;
     XEvent mXev;
+
+    WindowEvent convertEvent(const XEvent &event);
 };
 
 #endif // KAON_XLIB_WINDOW_HPP_

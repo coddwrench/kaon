@@ -14,6 +14,10 @@
 
 #include "window/xlib_window.hpp"
 
+KWindow::~KWindow() {
+  if (mDisplay) destroyWindow();
+}
+
 bool KWindow::createWindow(int width, int height, const std::string &name) {
   AbstractWindow::createWindow(width, height, name);
 
@@ -41,7 +45,7 @@ bool KWindow::createWindow(int width, int height, const std::string &name) {
   mWnd = XCreateWindow(mDisplay,
                       mRootWnd,
                       0, 0,             // (x, y) position of the window
-                      width, height,    // width and height of the window
+                      mWidth, mHeight,  // width and height of the window
                       0,                // border width
                       mVisInfo->depth,
                       InputOutput,
@@ -49,7 +53,7 @@ bool KWindow::createWindow(int width, int height, const std::string &name) {
                       CWColormap | CWEventMask, &mSwa);
 
   XMapWindow(mDisplay, mWnd);
-  XStoreName(mDisplay, mWnd, name.c_str());
+  XStoreName(mDisplay, mWnd, mName.c_str());
 
   // OpenGL stuff
   mGlc = glXCreateContext(mDisplay, mVisInfo, nullptr, GL_TRUE);
@@ -94,4 +98,8 @@ WindowEvent KWindow::convertEvent(const XEvent &event) {
       return WindowEvent::keyPress;
   }
   return WindowEvent::lastEvent;
+}
+
+std::shared_ptr<AbstractWindow> AbstractWindow::factory() {
+  return std::make_shared<KWindow>();
 }
