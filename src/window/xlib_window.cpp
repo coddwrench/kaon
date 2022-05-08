@@ -65,10 +65,11 @@ bool KWindow::createWindow(int width, int height, const std::string &name) {
 bool KWindow::destroyWindow() {
   glXMakeCurrent(mDisplay, None, nullptr);
   glXDestroyContext(mDisplay, mGlc);
-
+  XFreeColormap(mDisplay, mCMap);
+  XFree(mVisInfo);
   XDestroyWindow(mDisplay, mWnd);
-  XCloseDisplay(mDisplay);
 
+  XCloseDisplay(mDisplay);
   mDisplay = nullptr;
   return true;
 }
