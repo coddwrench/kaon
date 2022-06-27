@@ -88,8 +88,8 @@ void KWindow::draw() {
   auto itEvent = mEvents.find(event);
   if (itEvent == mEvents.end()) return;
   const auto &callbacks = itEvent->second;
-  for (auto itCB = callbacks.begin(); itCB != callbacks.end(); itCB++) {
-    (*itCB)(event, nullptr);
+  for (const auto & cb: callbacks) {
+    cb(event, nullptr);
   }
 }
 
