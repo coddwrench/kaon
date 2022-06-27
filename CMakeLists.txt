@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.12)
 project(kaon VERSION 0.1)
 include(CTest)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS True)
 # K Engine
 configure_file(src/kaonConfig.h.in kaonConfig.h)
 set(KAON_EXE kaon)
