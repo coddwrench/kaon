@@ -43,14 +43,14 @@ bool KWindow::createWindow(int width, int height, const std::string &name) {
   mSwa.colormap = mCMap;
   mSwa.event_mask = ExposureMask | KeyPressMask;
   mWnd = XCreateWindow(mDisplay,
-                      mRootWnd,
-                      0, 0,             // (x, y) position of the window
-                      mWidth, mHeight,  // width and height of the window
-                      0,                // border width
-                      mVisInfo->depth,
-                      InputOutput,
-                      mVisInfo->visual,
-                      CWColormap | CWEventMask, &mSwa);
+                       mRootWnd,
+                       0, 0,             // (x, y) position of the window
+                       mWidth, mHeight,  // width and height of the window
+                       0,                // border width
+                       mVisInfo->depth,
+                       InputOutput,
+                       mVisInfo->visual,
+                       CWColormap | CWEventMask, &mSwa);
 
   XMapWindow(mDisplay, mWnd);
   XStoreName(mDisplay, mWnd, mName.c_str());
