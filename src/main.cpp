@@ -10,14 +10,13 @@
 #include "window/abstract_window.hpp"
 
 int main() {
-  Log logger("main");
-  LOG(logger, "Starting kaon v" << kaon_VERSION_MAJOR << "." << kaon_VERSION_MINOR);
+  LOG("Starting kaon v" << kaon_VERSION_MAJOR << "." << kaon_VERSION_MINOR);
 
   std::shared_ptr<AbstractWindow> wnd = std::move(AbstractWindow::factory());
   bool run = true;
   wnd->createWindow();
 
-  auto keyPress = [&run, &logger](WindowEvent event, void *) {
+  auto keyPress = [&run](WindowEvent event, void *) {
     run = false;
   };
   wnd->addEventCB(WindowEvent::keyPress, keyPress);

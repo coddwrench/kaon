@@ -14,39 +14,58 @@
 #include <fstream>
 #include <ctime>
 
-#define LOG(log, str) log << str << std::endl
+#define LOG(str) Logger::instance() << str << std::endl
 
-class LogBase {
+class LoggerBase {
   protected:
-    std::shared_ptr<std::ostream> mLogFile;
-    std::string mPrefix;
+    std::shared_ptr<std::ostream> mLogFile {&std::cout, [](...){}};
 
-    LogBase(const std::string &prefix, const std::string &fpath);
-    LogBase(const LogBase &) = delete;
-    ~LogBase() = default;
+    LoggerBase() = default;
+    ~LoggerBase() = default;
+    LoggerBase(const LoggerBase &) = delete;
+
   public:
     template<typename T>
-    const LogBase &operator<< (const T &rhs) const {
+    LoggerBase &operator<< (const T &rhs) {
       *mLogFile << rhs;
       return *this;
     }
 
-    const LogBase &operator<< (std::ostream&(*func)(std::ostream&)) const {
+    LoggerBase &operator<< (std::ostream &(*func)(std::ostream &)) {
       (*func)(*mLogFile);
       return *this;
     }
 };
 
-class Log : public LogBase {
+class Logger : public LoggerBase {
+  private:
+    Logger() = default;
+    ~Logger() = default;
+    Logger(const Logger &) = delete;
+
   public:
-    Log(const std::string &prefix, const std::string &fpath = "");
+    static Logger &instance() {
+      static Logger logger;
+      return logger;
+    }
+
+    void setOutput(const std::string &fpath) {
+      if (!fpath.empty()) {
+        std::ofstream *file = new std::ofstream(fpath);
+        if (file->is_open()) {
+          mLogFile.reset(file);
+          return;
+        }
+      }
+      mLogFile.reset(&std::cout, [](...){});
+    }
 
     template<typename T>
-    const LogBase &operator<< (const T &rhs) const {
+    LoggerBase &operator<< (const T &rhs) {
       std::time_t time = std::time(nullptr);
       std::string localtime = std::asctime(std::localtime(&time));
       localtime.erase(--localtime.end(), localtime.end());
-      *mLogFile << "[" << localtime << "] " << mPrefix << ": " << rhs;
+      *mLogFile << "[" << localtime << "] " << rhs;
       return *this;
     }
 };
