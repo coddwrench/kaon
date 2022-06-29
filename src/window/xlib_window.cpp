@@ -22,12 +22,17 @@ bool KWindow::createWindow(int width, int height, const std::string &name) {
   AbstractWindow::createWindow(width, height, name);
 
   // If the window is already created then just throw an error;
-  if (mDisplay) return false;
+  if (mDisplay) {
+    LOG("Window is already created");
+    return false;
+  }
 
   // Connect to the X server. We're using a DISPLAY environment
   // variable here, so set the first argument to NULL.
-  if (!(mDisplay = XOpenDisplay(nullptr)))
+  if (!(mDisplay = XOpenDisplay(nullptr))) {
+    LOG("Can't open display");
     return false;
+  }
 
   // Get the root window.
   mRootWnd = DefaultRootWindow(mDisplay);
@@ -63,6 +68,7 @@ bool KWindow::createWindow(int width, int height, const std::string &name) {
 }
 
 bool KWindow::destroyWindow() {
+  LOG("Destroying window");
   glXMakeCurrent(mDisplay, None, nullptr);
   glXDestroyContext(mDisplay, mGlc);
   XFreeColormap(mDisplay, mCMap);
@@ -71,6 +77,7 @@ bool KWindow::destroyWindow() {
 
   XCloseDisplay(mDisplay);
   mDisplay = nullptr;
+  LOG("Window has been destroyed");
   return true;
 }
 

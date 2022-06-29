@@ -14,7 +14,14 @@ int main() {
 
   std::shared_ptr<AbstractWindow> wnd = std::move(AbstractWindow::factory());
   bool run = true;
-  wnd->createWindow();
+
+  LOG("Creating window");
+  if (wnd->createWindow()) {
+    LOG("Window has been created");
+  } else {
+    LOG("Failed to create window");
+    return 1;
+  }
 
   auto keyPress = [&run](WindowEvent event, void *) {
     run = false;
@@ -25,5 +32,6 @@ int main() {
     wnd->draw();
   }
 
+  LOG("Bye!");
   return 0;
 }
