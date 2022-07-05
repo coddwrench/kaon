@@ -15,11 +15,21 @@ target_include_directories(${KAON_EXE}
                            src/)
 target_link_libraries(${KAON_EXE} X11 GL GLU)
 
-# Tests
-if(${BUILD_TESTING})
-    set(TEST_LOG_EXE test_log)
-    add_executable(${TEST_LOG_EXE} tests/log.cpp)
+# Unit tests
+if(${BUILD_UNIT_TESTS})
+    # Logging
+    set(TEST_LOG_EXE log)
+    add_executable(${TEST_LOG_EXE}
+                   tests/log.cpp)
     target_include_directories(${TEST_LOG_EXE} PUBLIC src/)
     target_link_libraries(${TEST_LOG_EXE} gtest)
-    add_test(NAME TestLog COMMAND ${TEST_LOG_EXE})
+    add_test(NAME LogUnitTest COMMAND ${TEST_LOG_EXE})
+
+    # Vector
+    set(TEST_VECTOR_EXE vector)
+    add_executable(${TEST_VECTOR_EXE}
+                   tests/vector.cpp)
+    target_include_directories(${TEST_VECTOR_EXE} PUBLIC src/)
+    target_link_libraries(${TEST_VECTOR_EXE} gtest)
+    add_test(NAME VectorUnitTest COMMAND ${TEST_VECTOR_EXE})
 endif()
