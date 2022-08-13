@@ -110,13 +110,8 @@ void KWindow::nextEvent() {
   XNextEvent(mDisplay, &mXev);
   XLockDisplay(mDisplay);
   if (mXev.type == Expose) {
-    if (std::this_thread::get_id() != mCurrentThread) {
-      glXMakeCurrent(mDisplay, mWnd, mGlc);
-      mCurrentThread = std::this_thread::get_id();
-    }
     XGetWindowAttributes(mDisplay, mWnd, &mGwa);
     glViewport(0, 0, mGwa.width, mGwa.height);
-    glXSwapBuffers(mDisplay, mWnd);
   }
   XUnlockDisplay(mDisplay);
 
