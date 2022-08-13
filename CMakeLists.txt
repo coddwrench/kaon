@@ -8,12 +8,14 @@ configure_file(src/kaonConfig.h.in kaonConfig.h)
 set(KAON_EXE kaon)
 set(KAON_SRC
     src/main.cpp
-    src/window/xlib_window.cpp)
+    src/window/xlib_window.cpp
+    src/render/ogl_render.cpp)
 add_executable(${KAON_EXE} ${KAON_SRC})
 target_include_directories(${KAON_EXE}
                            PUBLIC ${CMAKE_BINARY_DIR}/
                            src/)
-target_link_libraries(${KAON_EXE} X11 GL GLU)
+
+target_link_libraries(${KAON_EXE} X11 GL GLU GLEW)
 
 # Unit tests
 if(${BUILD_UNIT_TESTS})

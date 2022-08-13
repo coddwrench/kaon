@@ -13,6 +13,7 @@
  */
 
 #include "window/xlib_window.hpp"
+#include <X11/Xutil.h>
 
 KWindow::~KWindow() {
   if (mDisplay) destroyWindow();
@@ -27,6 +28,7 @@ bool KWindow::createWindow(int width, int height, const std::string &name) {
     return false;
   }
 
+  XInitThreads();
   // Connect to the X server. We're using a DISPLAY environment
   // variable here, so set the first argument to NULL.
   if (!(mDisplay = XOpenDisplay(nullptr))) {
@@ -35,11 +37,22 @@ bool KWindow::createWindow(int width, int height, const std::string &name) {
   }
 
   // Get the root window.
-  mRootWnd = DefaultRootWindow(mDisplay);
+  Screen *screen = DefaultScreenOfDisplay(mDisplay);
+  int screenId = DefaultScreen(mDisplay);
+  mRootWnd = RootWindow(mDisplay, screenId);
 
   // Get visual for given attributes
-  GLint visAtt[] = { GLX_RGBA, GLX_DEPTH_SIZE, 24, None };
-  mVisInfo = glXChooseVisual(mDisplay, 0, visAtt);
+  GLint visAtt[] = { GLX_RGBA,
+                     GLX_DOUBLEBUFFER,
+                     GLX_DEPTH_SIZE, 24,
+                     GLX_STENCIL_SIZE, 8,
+                     GLX_RED_SIZE, 8,
+                     GLX_GREEN_SIZE, 8,
+                     GLX_BLUE_SIZE, 8,
+                     GLX_SAMPLE_BUFFERS, 0,
+                     GLX_SAMPLES, 0,
+                     None };
+  mVisInfo = glXChooseVisual(mDisplay, screenId, visAtt);
 
   // Create colormap for the window
   mCMap = XCreateColormap(mDisplay, mRootWnd, mVisInfo->visual, AllocNone);
@@ -57,12 +70,14 @@ bool KWindow::createWindow(int width, int height, const std::string &name) {
                        mVisInfo->visual,
                        CWColormap | CWEventMask, &mSwa);
 
-  XMapWindow(mDisplay, mWnd);
-  XStoreName(mDisplay, mWnd, mName.c_str());
-
   // OpenGL stuff
   mGlc = glXCreateContext(mDisplay, mVisInfo, nullptr, GL_TRUE);
   glXMakeCurrent(mDisplay, mWnd, mGlc);
+  glViewport(0, 0, mWidth, mHeight);
+
+  XClearWindow(mDisplay, mWnd);
+  XMapRaised(mDisplay, mWnd);
+  XStoreName(mDisplay, mWnd, mName.c_str());
 
   return true;
 }
@@ -82,13 +97,28 @@ bool KWindow::destroyWindow() {
 }
 
 void KWindow::draw() {
-  XNextEvent(mDisplay, &mXev);
-
-  if (mXev.type == Expose) {
-    XGetWindowAttributes(mDisplay, mWnd, &mGwa);
+  XLockDisplay(mDisplay);
+  if (std::this_thread::get_id() != mCurrentThread) {
+    glXMakeCurrent(mDisplay, mWnd, mGlc);
+    mCurrentThread = std::this_thread::get_id();
   }
-
   glXSwapBuffers(mDisplay, mWnd);
+  XUnlockDisplay(mDisplay);
+}
+
+void KWindow::nextEvent() {
+  XNextEvent(mDisplay, &mXev);
+  XLockDisplay(mDisplay);
+  if (mXev.type == Expose) {
+    if (std::this_thread::get_id() != mCurrentThread) {
+      glXMakeCurrent(mDisplay, mWnd, mGlc);
+      mCurrentThread = std::this_thread::get_id();
+    }
+    XGetWindowAttributes(mDisplay, mWnd, &mGwa);
+    glViewport(0, 0, mGwa.width, mGwa.height);
+    glXSwapBuffers(mDisplay, mWnd);
+  }
+  XUnlockDisplay(mDisplay);
 
   auto event = convertEvent(mXev);
   if (event == WindowEvent::lastEvent) return;

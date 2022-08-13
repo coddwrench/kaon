@@ -24,7 +24,7 @@ using WindowEventId = int;
 class AbstractWindow {
   public:
     virtual ~AbstractWindow() = default;
-    virtual bool createWindow(int width = 640, int height = 480, const std::string &name = "K engine") {
+    virtual bool createWindow(int width, int height, const std::string &name) {
       mWidth = width;
       mHeight = height;
       mName = name;
@@ -32,6 +32,7 @@ class AbstractWindow {
     }
     virtual bool destroyWindow() = 0;
     virtual void draw() = 0;
+    virtual void nextEvent() = 0;
 
     WindowEventId addEventCB(WindowEvent event, WindowEventCB func) {
       auto itEvent = mEvents.find(event);

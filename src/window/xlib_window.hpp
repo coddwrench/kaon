@@ -11,6 +11,8 @@
 #include <X11/X.h>
 #include <X11/Xlib.h>
 #include <GL/glx.h>
+#include <thread>
+#include <atomic>
 
 class KWindow : public AbstractWindow {
   public:
@@ -18,6 +20,7 @@ class KWindow : public AbstractWindow {
     bool createWindow(int width, int height, const std::string &name) override;
     bool destroyWindow() override;
     void draw() override;
+    void nextEvent() override;
 
   private:
     Display *mDisplay {nullptr};
@@ -29,6 +32,7 @@ class KWindow : public AbstractWindow {
     GLXContext mGlc;
     XWindowAttributes mGwa;
     XEvent mXev;
+    std::atomic<std::thread::id> mCurrentThread;
 
     WindowEvent convertEvent(const XEvent &event);
 };
