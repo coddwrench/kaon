@@ -9,7 +9,8 @@ set(KAON_EXE kaon)
 set(KAON_SRC
     src/main.cpp
     src/window/xlib_window.cpp
-    src/render/ogl_render.cpp)
+    src/render/ogl_render.cpp
+    src/scene/scene.cpp)
 add_executable(${KAON_EXE} ${KAON_SRC})
 target_include_directories(${KAON_EXE}
                            PUBLIC ${CMAKE_BINARY_DIR}/

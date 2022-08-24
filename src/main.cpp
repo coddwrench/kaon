@@ -9,6 +9,7 @@
 #include "log.hpp"
 #include "window/abstract_window.hpp"
 #include "render/abstract_render.hpp"
+#include "scene/scene.hpp"
 #include <atomic>
 #include <thread>
 #include <chrono>
@@ -29,15 +30,19 @@ int main() {
     LOG("Failed to create window");
     return 1;
   }
+  LOG("Creating render");
   render->createRender();
+  LOG("Loading scene");
+  Scene scene(render);
+  scene.loadScene("test.json");
 
   auto keyPress = [&run](WindowEvent event, void *) {
     run = false;
   };
   wnd->addEventCB(WindowEvent::keyPress, keyPress);
-  auto loop = [wnd, render, &run]() {
+  auto loop = [wnd, &scene, &run]() {
     while (run) {
-      render->render();
+      scene.frame();
       wnd->draw();
       std::this_thread::sleep_for(1s/60);
     }
