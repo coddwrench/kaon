@@ -1,0 +1,9 @@
+{
+  "cube": {
+    "type": "object",
+    "pos": {"x": 0.0, "y": 0.0, "z": 0.0},
+    "model": "../test_data/cube.bin",
+    "vtx_shader": "../test_data/cube.vert",
+    "frg_shader": "../test_data/cube.frag"
+  }
+}
