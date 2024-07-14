@@ -30,10 +30,10 @@ Engine::Engine() {
     throw std::runtime_error("Failed to create window");
   }
 
-  LOG("Creating mRender");
+  LOG("Creating render");
   mRender->createRender();
 
-  LOG("Loading mScene");
+  LOG("Loading scene");
   mScene = std::make_shared<Scene>(mRender);
   mScene->loadScene("test.json");
 
