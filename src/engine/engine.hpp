@@ -34,7 +34,6 @@ class Engine {
     ~Engine();
 
     static void keyPress(WindowEvent event, void *);
-    static void loop();
 
     std::shared_ptr<AbstractWindow> mWindow;
     std::shared_ptr<AbstractRender> mRender;

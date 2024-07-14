@@ -45,24 +45,21 @@ Engine::~Engine() {
 }
 
 void Engine::run() {
-  std::thread thLoop(&loop);
+  std::thread thEvents([this](){
+    while (mRun) {
+      mWindow->nextEvent();
+    }
+  });
   while (mRun) {
-    mWindow->nextEvent();
+    mScene->frame();
+    mWindow->draw();
+    std::this_thread::sleep_for(1s/60);
   }
-  thLoop.join();
+  thEvents.join();
 }
 
 void Engine::keyPress(WindowEvent event, void *) {
   static Engine &engine = Engine::instance();
   LOG("Key has been pressed");
   engine.mRun = false;
-}
-
-void Engine::loop() {
-  static Engine &engine = Engine::instance();
-  while (engine.mRun) {
-    engine.mScene->frame();
-    engine.mWindow->draw();
-    std::this_thread::sleep_for(1s/60);
-  }
 }
