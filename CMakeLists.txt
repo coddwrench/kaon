@@ -11,7 +11,7 @@ set(KAON_SRC
     src/engine/engine.cpp
     src/window/xlib_window.cpp
     src/render/ogl_render.cpp
-    src/scene/scene.cpp)
+    src/scene/scene.cpp
     src/scene/scene.cpp
     src/scene/loader/model/bin.cpp
     src/scene/loader/model/obj.cpp

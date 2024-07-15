@@ -6,6 +6,7 @@
  */
 
 #include "scene/scene.hpp"
+#include "scene/loader/model/bin.hpp"
 #include "log.hpp"
 #include <nlohmann/json.hpp>
 #include <fstream>
@@ -93,20 +94,10 @@ void Scene::frame() {
 }
 
 bool Scene::loadModel(Entity3 &entity, const std::string &path) {
-  std::ifstream file(path, std::ios::binary | std::ios::ate);
-  if (!file.is_open()) {
-    LOG("Can't open a file with model: " << path);
-    return false;
+  if (loader::model::bin(path, entity)) {
+    return mRender->loadModel(entity);
   }
-  auto nsz = file.tellg();
-  // This is god awful bad. Isn't it? But, it should be just a test.
-  // TODO: sort tthe sortt iut if itf.
-  float *model = new float[nsz/sizeof(float)];
-  file.seekg(0);
-  file.read((char *)model, nsz);
-  entity.setVtx(model, nsz/sizeof(float));
-
-  return mRender->loadModel(entity);
+  return false;
 }
 
 bool Scene::loadVtxShader(Entity3 &entity, const std::string &path) {
