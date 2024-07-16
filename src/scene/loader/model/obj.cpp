@@ -45,15 +45,17 @@ static bool getVertex(const std::string &line, float *vtx) {
 }
 
 static int getFace(const std::string &line, int *faces) {
-  std::string face;
-  std::istringstream str{line};
-  unsigned nfaces {0};
+  std::istringstream str{line.substr(2)}; // TODO: Here we just skip "f " part but there could be more white-spaces
 
+  // Wavefront obj can have X/Y/Z fields separated by white-spaces.
+  // For now we're only interested in X... and /Y/Z part could be optional.
+  std::string face;
+  unsigned nfaces {0};
   while (std::getline(str, face, ' ')) {
     auto pos = face.find('/');
-    if (pos != face.npos) {
-      faces[nfaces++] = std::atoi(face.substr(0, pos).c_str());
-    }
+    // Here we don't care about whether we found or not (npos). Because if we
+    // didn't find then the field has only X without /Y/Z.
+    faces[nfaces++] = std::atoi(face.substr(0, pos).c_str());
   }
 
   return nfaces;
@@ -69,7 +71,7 @@ bool loader::model::obj(const std::string &path, Entity3 &entity) {
   std::stringstream objContent;
   objContent << file.rdbuf();
   // Calculate counters and allocate data
-  int nV{0}, nF{0}, nIdx{0};
+  int nV{0}, nF{0}, nFacesInds{0};
   for (std::string line{}; std::getline(objContent, line);) {
     switch (getLineType(line)) {
       case ObjLineType::Vertex:
@@ -78,15 +80,15 @@ bool loader::model::obj(const std::string &path, Entity3 &entity) {
       case ObjLineType::Face:
         ++nF;
         for (char ch: line) {
-          if (ch == ' ') ++nIdx; // We assume that numbers separated only by 1 white-space
+          if (ch == ' ') ++nFacesInds; // We assume that numbers separated only by 1 white-space
         }
         break;
     }
   }
 
   float *vtx = new(std::nothrow) float[nV*3]; // We will not use 4-th coord (w)
-  int *faces = new(std::nothrow) int[nIdx];
-  float *model = new(std::nothrow) float[nIdx*3];
+  int *faces = new(std::nothrow) int[nF];
+  float *model = new(std::nothrow) float[nFacesInds*3];
   if (!model || !faces || !vtx) {
     LOG("Can't allocate memory for the model");
     delete[] vtx; delete[] faces; delete[] model;
@@ -99,7 +101,7 @@ bool loader::model::obj(const std::string &path, Entity3 &entity) {
   objContent << file.rdbuf();
 
   unsigned vtxRead {0};
-  unsigned facesRead {0};
+  unsigned facesIdxRead {0};
   for (std::string line{}; std::getline(objContent, line);) {
     switch (getLineType(line)) {
       case ObjLineType::Vertex:
@@ -107,19 +109,19 @@ bool loader::model::obj(const std::string &path, Entity3 &entity) {
         vtxRead++;
         break;
       case ObjLineType::Face:
-        facesRead += getFace(line, faces + facesRead);
+        facesIdxRead += getFace(line, faces + facesIdxRead);
         break;
     }
   }
 
   // Construct a model using faces and vertices
-  for (unsigned iVtx {0}; iVtx < facesRead; ++iVtx) {
+  for (unsigned iVtx {0}; iVtx < facesIdxRead; ++iVtx) {
     model[iVtx*3] = vtx[(faces[iVtx] - 1)*3];
     model[iVtx*3 + 1] = vtx[(faces[iVtx] - 1)*3 + 1];
     model[iVtx*3 + 2] = vtx[(faces[iVtx] - 1)*3 + 2];
   }
 
-  entity.setVtx(model, nIdx*3);
+  entity.setVtx(model, nFacesInds*3);
   delete[] vtx; delete[] faces;
   return true;
 }
