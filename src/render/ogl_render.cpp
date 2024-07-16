@@ -82,7 +82,7 @@ void OGLRender::render(std::vector<Entity3> &entities) {
     auto &shader_ptr = entity.getShader();
     auto &vertex_ptr = entity.getVertexBuffer();
     glBindVertexArray(vertex_ptr->getVAO());
-    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glDrawArrays(GL_TRIANGLES, 0, entity.getVtxLen());
   }
 }
 
