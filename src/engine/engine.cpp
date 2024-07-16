@@ -23,7 +23,7 @@ Engine::Engine() {
   mRender = std::move(AbstractRender::factory());
 
   LOG("Creating window");
-  if (mWindow->createWindow(800, 600, "K engine")) {
+  if (mWindow->createWindow(1920, 1080, "K engine")) {
     LOG("Window has been created");
   } else {
     LOG("Failed to create window");
