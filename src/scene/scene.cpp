@@ -61,7 +61,7 @@ bool Scene::loadScene(const std::string &path) {
             break;
           }
           loadVtxShader(entity, node.value()["vtx_shader"]); // TODO: check for return
-          LOG("Vertex shader " << node.value()["model"] << " has been loaded");
+          LOG("Vertex shader " << node.value()["vtx_shader"] << " has been loaded");
           // Load fragment shader
           if (!node.value().contains("frg_shader")) {
             LOG("Entity " << node.key() << " with type Object doesn't have frg_shader node");
@@ -72,7 +72,7 @@ bool Scene::loadScene(const std::string &path) {
             break;
           }
           loadFrgShader(entity, node.value()["frg_shader"]); // TODO: check for return
-          LOG("Fragment shader " << node.value()["model"] << " has been loaded");
+          LOG("Fragment shader " << node.value()["frg_shader"] << " has been loaded");
           isLoaded = true;
           mRender->linkShader(entity);
         }
