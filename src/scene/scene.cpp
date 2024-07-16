@@ -7,6 +7,7 @@
 
 #include "scene/scene.hpp"
 #include "scene/loader/model/bin.hpp"
+#include "scene/loader/model/obj.hpp"
 #include "log.hpp"
 #include <nlohmann/json.hpp>
 #include <fstream>
@@ -94,7 +95,16 @@ void Scene::frame() {
 }
 
 bool Scene::loadModel(Entity3 &entity, const std::string &path) {
-  if (loader::model::bin(path, entity)) {
+  std::string suffix = path.substr(path.size() - 3);
+  bool ret {false};
+
+  if (suffix == "bin") {
+    ret = loader::model::bin(path, entity);
+  } else if (suffix == "obj") {
+    ret = loader::model::obj(path, entity);
+  }
+
+  if (ret) {
     return mRender->loadModel(entity);
   }
   return false;
