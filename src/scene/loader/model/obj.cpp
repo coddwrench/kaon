@@ -40,9 +40,7 @@ static bool getVertex(const std::string &line, float *vtx) {
   float w;
   std::istringstream str{line};
 
-
   str >> v >> vtx[0] >> vtx[1] >> vtx[2] >> w;
-  LOG(__func__ << ": " << vtx[0] << " " << vtx[1] << " " << vtx[2]);
   return true;
 }
 
@@ -106,7 +104,6 @@ bool loader::model::obj(const std::string &path, Entity3 &entity) {
     switch (getLineType(line)) {
       case ObjLineType::Vertex:
         getVertex(line, vtx + vtxRead*3); // TODO: return value
-        LOG("vtx: " << vtx[vtxRead*3] << " " << vtx[vtxRead*3 + 1] << " " << vtx[vtxRead*3 + 2]);
         vtxRead++;
         break;
       case ObjLineType::Face:
@@ -120,8 +117,6 @@ bool loader::model::obj(const std::string &path, Entity3 &entity) {
     model[iVtx*3] = vtx[(faces[iVtx] - 1)*3];
     model[iVtx*3 + 1] = vtx[(faces[iVtx] - 1)*3 + 1];
     model[iVtx*3 + 2] = vtx[(faces[iVtx] - 1)*3 + 2];
-    LOG("face" << faces[iVtx]);
-    LOG("model: x=" << model[iVtx*3] << " y=" << model[iVtx*3+1] << " z=" << model[iVtx*3+2]);
   }
 
   entity.setVtx(model, nIdx*3);
