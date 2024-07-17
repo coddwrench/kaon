@@ -6,6 +6,8 @@
  */
 
 #include "scene/scene.hpp"
+#include "scene/loader/model/bin.hpp"
+#include "scene/loader/model/obj.hpp"
 #include "log.hpp"
 #include <nlohmann/json.hpp>
 #include <fstream>
@@ -60,7 +62,7 @@ bool Scene::loadScene(const std::string &path) {
             break;
           }
           loadVtxShader(entity, node.value()["vtx_shader"]); // TODO: check for return
-          LOG("Vertex shader " << node.value()["model"] << " has been loaded");
+          LOG("Vertex shader " << node.value()["vtx_shader"] << " has been loaded");
           // Load fragment shader
           if (!node.value().contains("frg_shader")) {
             LOG("Entity " << node.key() << " with type Object doesn't have frg_shader node");
@@ -71,7 +73,7 @@ bool Scene::loadScene(const std::string &path) {
             break;
           }
           loadFrgShader(entity, node.value()["frg_shader"]); // TODO: check for return
-          LOG("Fragment shader " << node.value()["model"] << " has been loaded");
+          LOG("Fragment shader " << node.value()["frg_shader"] << " has been loaded");
           isLoaded = true;
           mRender->linkShader(entity);
         }
@@ -93,20 +95,19 @@ void Scene::frame() {
 }
 
 bool Scene::loadModel(Entity3 &entity, const std::string &path) {
-  std::ifstream file(path, std::ios::binary | std::ios::ate);
-  if (!file.is_open()) {
-    LOG("Can't open a file with model: " << path);
-    return false;
-  }
-  auto nsz = file.tellg();
-  // This is god awful bad. Isn't it? But, it should be just a test.
-  // TODO: sort tthe sortt iut if itf.
-  float *model = new float[nsz/sizeof(float)];
-  file.seekg(0);
-  file.read((char *)model, nsz);
-  entity.setVtx(model, nsz/sizeof(float));
+  std::string suffix = path.substr(path.size() - 3);
+  bool ret {false};
 
-  return mRender->loadModel(entity);
+  if (suffix == "bin") {
+    ret = loader::model::bin(path, entity);
+  } else if (suffix == "obj") {
+    ret = loader::model::obj(path, entity);
+  }
+
+  if (ret) {
+    return mRender->loadModel(entity);
+  }
+  return false;
 }
 
 bool Scene::loadVtxShader(Entity3 &entity, const std::string &path) {

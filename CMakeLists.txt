@@ -8,9 +8,14 @@ configure_file(src/kaonConfig.h.in kaonConfig.h)
 set(KAON_EXE kaon)
 set(KAON_SRC
     src/main.cpp
+    src/engine/engine.cpp
     src/window/xlib_window.cpp
     src/render/ogl_render.cpp
-    src/scene/scene.cpp)
+    src/scene/scene.cpp
+    src/scene/scene.cpp
+    src/scene/loader/model/bin.cpp
+    src/scene/loader/model/obj.cpp
+)
 add_executable(${KAON_EXE} ${KAON_SRC})
 target_include_directories(${KAON_EXE}
                            PUBLIC ${CMAKE_BINARY_DIR}/
